@@ -18,10 +18,12 @@
       const out = document.getElementById('output');
       const parser = new DOMParser();      // 用来把字符串解析成 XML Document
       const processor = new XSLTProcessor();
-
+      var xmlURL = "https://raw.githubusercontent.com/xyh200318-hue/xslt-demo/refs/heads/main/data.xml
+"
+      var xmlURL = "https://raw.githubusercontent.com/xyh200318-hue/xslt-demo/refs/heads/main/style.xsl"
       // 这里改成你实际的文件名，默认放在同目录即可
-      const xmlURL = https://github.com/xyh200318-hue/xslt-demo/blob/main/data.xml;
-      const xslURL = https://github.com/xyh200318-hue/xslt-demo/blob/main/style.xsl;
+      const xmlURL = data.xml;
+      const xslURL = index.html;
 
       // 先加载 XSL，再加载 XML，再执行转换
       fetch(xslURL)
