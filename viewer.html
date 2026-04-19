@@ -20,8 +20,9 @@
       const processor = new XSLTProcessor();
 
       // 同仓库相对路径（和 HTML 放在同一目录下）
-      const xmlURL = './data.xml';   // 你的 badges XML
-      const xslURL = './style.xsl';  // 上面的 XSL
+      const xmlURL = 'https://raw.githubusercontent.com/xyh200318-hue/xslt-demo/refs/heads/main/data.xml';   // 你的 badges XML
+      const xslURL = 'https://raw.githubusercontent.com/xyh200318-hue/xslt-demo/refs/heads/main/style.xsl
+';  // 上面的 XSL
 
       fetch(xslURL)
         .then(res => {
