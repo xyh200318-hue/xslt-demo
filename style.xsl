@@ -2,30 +2,34 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output method="html" indent="yes" encoding="UTF-8"/>
 
-  <xsl:template match="badges">
+  <!-- 根节点：badges -->
+  <xsl:template match="/badges">
     <html>
       <head>
         <meta charset="UTF-8"/>
-        <title>Activity Badges</title>
+        <title>Scout Badges</title>
         <style>
-          body { font-family: system-ui, sans-serif; margin: 20px; }
-          h1   { text-align: center; margin-bottom: 16px; }
-          table { width: 100%; border-collapse: collapse; }
-          th, td { border: 1px solid #d1d5db; padding: 8px; text-align: left; }
-          th     { background: #e5e7eb; font-weight: 600; }
-          ul     { margin: 0; padding-left: 18px; }
-          li     { margin-bottom: 2px; }
-          .footer { text-align: center; margin-top: 20px; font-size: 0.86rem; color: #6b7280; }
+          body { font-family: Arial, sans-serif; margin: 16px; }
+          h1, h2 { text-align: center; }
+          table { border-collapse: collapse; width: 100%; max-width: 960px; margin: 12px auto; }
+          th, td { border: 1px solid #ddd; text-align: left; padding: 6px 8px; }
+          th { background: #f5f5f5; }
+          .type-label { margin-top: 18px; }
         </style>
       </head>
       <body>
-        <h1>Activity Badges</h1>
+        <h1>Scout Badges</h1>
+
+        <!-- Activity badges -->
+        <h2 class="type-label">Activity Badges</h2>
         <table>
           <thead>
             <tr>
               <th>Name</th>
               <th>Description</th>
-              <th>Levels</th>
+              <th>Beaver</th>
+              <th>Cub</th>
+              <th>Scout</th>
             </tr>
           </thead>
           <tbody>
@@ -34,36 +38,48 @@
             </xsl:apply-templates>
           </tbody>
         </table>
-        <p class="footer"><i>&#xA9; College Productions Ltd</i></p>
+
+        <!-- Development badges -->
+        <h2 class="type-label">Development Badges</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Beaver</th>
+              <th>Cub</th>
+              <th>Scout</th>
+            </tr>
+          </thead>
+          <tbody>
+            <xsl:apply-templates select="badge[@type='development']">
+              <xsl:sort order="ascending" select="name"/>
+            </xsl:apply-templates>
+          </tbody>
+        </table>
+
+        <p style="text-align:center;margin-top:18px;">
+          <i>© College Productions Ltd</i>
+        </p>
       </body>
     </html>
   </xsl:template>
 
+  <!-- 每个 badge 生成一行 -->
   <xsl:template match="badge">
     <tr>
       <td><xsl:value-of select="name"/></td>
       <td><xsl:value-of select="description"/></td>
       <td>
-        <xsl:apply-templates select="levels"/>
+        <xsl:value-of select="levels/availability[@level='beaver']"/>
+      </td>
+      <td>
+        <xsl:value-of select="levels/availability[@level='cub']"/>
+      </td>
+      <td>
+        <xsl:value-of select="levels/availability[@level='scout']"/>
       </td>
     </tr>
-  </xsl:template>
-
-  <xsl:template match="levels">
-    <ul>
-      <xsl:apply-templates select="availability"/>
-    </ul>
-  </xsl:template>
-
-  <xsl:template match="availability">
-    <li>
-      <xsl:choose>
-        <xsl:when test="@level = 'beaver'">Beaver: </xsl:when>
-        <xsl:when test="@level = 'scout'">Scout: </xsl:when>
-        <xsl:otherwise>Cub: </xsl:otherwise>
-      </xsl:choose>
-      <xsl:value-of select="."/>
-    </li>
   </xsl:template>
 
 </xsl:stylesheet>
