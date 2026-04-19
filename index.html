@@ -1,46 +1,65 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Display and Transform XML</title>
-  <script type="text/javascript">
-    function display() {
-      // 改成你实际的文件名（和 html 放在同一个文件夹）
-      var xmlURL = "data.xml";
-      var xmlstyleURL = "style.xsl";
-
-      var request;
-      try {
-        if (window.XMLHttpRequest) {
-          request = new XMLHttpRequest();
-        } else {
-          request = new ActiveXObject("Microsoft.XMLHTTP");
-        }
-        // 加载 XML
-        request.open("GET", xmlURL, false);
-        request.send();
-        var xmlDoc = request.responseXML;
-        // 加载 XSLT
-        request.open("GET", xmlstyleURL, false);
-        request.send();
-        var xslDoc = request.responseXML;
-
-        // 转换并显示
-        if (window.ActiveXObject) {
-          var result = xmlDoc.transformNode(xslDoc);
-          document.getElementById("output").innerHTML = result;
-        } else {
-          var processor = new XSLTProcessor();
-          processor.importStylesheet(xslDoc);
-          var fragment = processor.transformToFragment(xmlDoc, document);
-          document.getElementById("output").appendChild(fragment);
-        }
-      } catch (err) {
-        alert("错误：" + err);
-      }
-    }
-  </script>
+  <style>
+    body { font-family: Arial, sans-serif; }
+    #output { margin: 20px auto; width: 80%; }
+  </style>
 </head>
-<body onload="display()">
-  <div id="output"></div>
+<body>
+  <h1 style="text-align:center;">Book Catalog</h1>
+  <div id="output">Loading...</div>
+
+  <script>
+    function loadAndTransform() {
+      const out = document.getElementById('output');
+      const parser = new DOMParser();      // 用来把字符串解析成 XML Document
+      const processor = new XSLTProcessor();
+
+      // 这里改成你实际的文件名，默认放在同目录即可
+      const xmlURL = 'data.xml';
+      const xslURL = 'style.xsl';
+
+      // 先加载 XSL，再加载 XML，再执行转换
+      fetch(xslURL)
+        .then(res => {
+          if (!res.ok) throw new Error('Failed to fetch XSL: ' + res.status);
+          return res.text();
+        })
+        .then(xslText => {
+          // 解析为 XML 文档
+          const xslDoc = parser.parseFromString(xslText, 'application/xml');
+          const errNode = xslDoc.querySelector('parsererror');
+          if (errNode) throw new Error('XSL parse error: ' + errNode.textContent);
+
+          processor.importStylesheet(xslDoc);
+
+          // 再加载 XML
+          return fetch(xmlURL).then(res => {
+            if (!res.ok) throw new Error('Failed to fetch XML: ' + res.status);
+            return res.text();
+          });
+        })
+        .then(xmlText => {
+          const xmlDoc = parser.parseFromString(xmlText, 'application/xml');
+          const errNode = xmlDoc.querySelector('parsererror');
+          if (errNode) throw new Error('XML parse error: ' + errNode.textContent);
+
+          // 关键：用 transformToFragment，避免完整 HTML 嵌套问题
+          const fragment = processor.transformToFragment(xmlDoc, document);
+          out.textContent = '';
+          out.appendChild(fragment);
+        })
+        .catch(err => {
+          console.error(err);
+          out.textContent = 'Transform error: ' + err.message;
+        });
+    }
+
+    window.addEventListener('DOMContentLoaded', loadAndTransform);
+  </script>
 </body>
 </html>
