@@ -8,64 +8,62 @@
         <meta charset="UTF-8"/>
         <title>Activity Badges</title>
         <style>
-          body { font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; margin: 20px; background: #f5f7fa; }
-          h1   { text-align: center; margin-bottom: 24px; }
-          .badge-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 18px; }
-          .badge-card  { background: #ffffff; border-radius: 10px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
-          .badge-card h2 { margin: 0 0 8px; font-size: 1.1rem; }
-          .badge-card p  { margin: 4px 0; font-size: 0.92rem; }
-          .badge-levels { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 8px; }
-          .badge-level-tag { padding: 4px 10px; border-radius: 999px; font-size: 0.82rem; font-weight: 600; }
-          .badge-level-tag.beaver { background: #e0f2fe; color: #0369a1; }
-          .badge-level-tag.scout  { background: #fef9c3; color: #a16207; }
-          .badge-level-tag.cub    { background: #fce7f3; color: #9d174d; }
-          .footer { text-align: center; margin-top: 28px; font-size: 0.85rem; color: #64748b; }
+          body { font-family: system-ui, sans-serif; margin: 20px; }
+          h1   { text-align: center; margin-bottom: 16px; }
+          table { width: 100%; border-collapse: collapse; }
+          th, td { border: 1px solid #d1d5db; padding: 8px; text-align: left; }
+          th     { background: #e5e7eb; font-weight: 600; }
+          ul     { margin: 0; padding-left: 18px; }
+          li     { margin-bottom: 2px; }
+          .footer { text-align: center; margin-top: 20px; font-size: 0.86rem; color: #6b7280; }
         </style>
       </head>
       <body>
         <h1>Activity Badges</h1>
-        <div class="badge-list">
-          <xsl:apply-templates select="badge[@type='activity']">
-            <xsl:sort order="ascending" select="name"/>
-          </xsl:apply-templates>
-        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Levels</th>
+            </tr>
+          </thead>
+          <tbody>
+            <xsl:apply-templates select="badge[@type='activity']">
+              <xsl:sort order="ascending" select="name"/>
+            </xsl:apply-templates>
+          </tbody>
+        </table>
         <p class="footer"><i>&#xA9; College Productions Ltd</i></p>
       </body>
     </html>
   </xsl:template>
 
   <xsl:template match="badge">
-    <div class="badge-card">
-      <h2><xsl:value-of select="name"/></h2>
-      <p><xsl:value-of select="description"/></p>
-      <div class="badge-levels">
+    <tr>
+      <td><xsl:value-of select="name"/></td>
+      <td><xsl:value-of select="description"/></td>
+      <td>
         <xsl:apply-templates select="levels"/>
-      </div>
-    </div>
+      </td>
+    </tr>
   </xsl:template>
 
   <xsl:template match="levels">
-    <xsl:apply-templates select="availability"/>
+    <ul>
+      <xsl:apply-templates select="availability"/>
+    </ul>
   </xsl:template>
 
   <xsl:template match="availability">
-    <!-- 每个级别以“标签”形式展示 -->
-    <span>
-      <xsl:attribute name="class">
-        badge-level-tag
-        <xsl:choose>
-          <xsl:when test="@level = 'beaver'">beaver</xsl:when>
-          <xsl:when test="@level = 'scout'">scout</xsl:when>
-          <xsl:otherwise>cub</xsl:otherwise>
-        </xsl:choose>
-      </xsl:attribute>
+    <li>
       <xsl:choose>
         <xsl:when test="@level = 'beaver'">Beaver: </xsl:when>
         <xsl:when test="@level = 'scout'">Scout: </xsl:when>
         <xsl:otherwise>Cub: </xsl:otherwise>
       </xsl:choose>
       <xsl:value-of select="."/>
-    </span>
+    </li>
   </xsl:template>
 
 </xsl:stylesheet>
