@@ -1,62 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Scout Badges – XSLT Demo</title>
-  <style>
-    body { font-family: Arial, sans-serif; margin: 16px; }
-    #output { margin: 12px auto; max-width: 1000px; }
-  </style>
+    <meta charset="UTF-8">
+    <title>XML to HTML Viewer (XSLT) – Guided Learning Records</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 1000px; margin: 20px auto; padding: 0 20px; background: #fafafa; }
+        h2 { color: #2c3e50; }
+        .controls { margin: 15px 0; }
+        button {
+            padding: 8px 20px; cursor: pointer;
+            background: #2c3e50; color: #fff; border: none; border-radius: 4px; font-size: 14px;
+        }
+        button:hover { background: #34495e; }
+        .error { color: #721c24; background: #f8d7da; padding: 12px; border-left: 5px solid #dc3545; border-radius: 4px; }
+        #output { margin-top: 20px; }
+    </style>
 </head>
 <body>
-  <h1 style="text-align:center;">Scout Badges – XSLT Demo</h1>
-  <div id="output">Loading...</div>
+    <h2>XSLT Transformation Viewer – Guided Learning Records</h2>
+    <div class="controls">
+        <button id="loadBtn">Load and Transform</button>
+    </div>
+    <div id="output">Click the button to load <code>learning_records.xml</code> and apply XSLT transformation.</div>
+    <script>
+        (function() {
+            const xmlUrl = 'learning_records.xml';
+            const xslUrl = 'style1.xsl';
+            const loadBtn = document.getElementById('loadBtn');
+            const outputDiv = document.getElementById('output');
 
-  <script>
-    function loadAndTransform() {
-      const out = document.getElementById('output');
-      const parser = new DOMParser();
-      const processor = new XSLTProcessor();
+            async function loadXML(url) {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('HTTP ' + response.status + ': ' + response.statusText);
+                const text = await response.text();
+                return new DOMParser().parseFromString(text, 'application/xml');
+            }
 
-      // 同仓库相对路径（和 HTML 放在同一目录下）
-      const xmlURL = 'https://raw.githubusercontent.com/xyh200318-hue/xslt-demo/refs/heads/main/data.xml';   // 你的 badges XML
-      const xslURL = 'https://raw.githubusercontent.com/xyh200318-hue/xslt-demo/refs/heads/main/style.xsl
-';  // 上面的 XSL
+            async function transform() {
+                outputDiv.innerHTML = '<em>Loading and transforming...</em>';
+                try {
+                    var xmlDoc = await loadXML(xmlUrl);
+                    var xslDoc = await loadXML(xslUrl);
 
-      fetch(xslURL)
-        .then(res => {
-          if (!res.ok) throw new Error('Failed to fetch XSL: ' + res.status);
-          return res.text();
-        })
-        .then(xslText => {
-          const xslDoc = parser.parseFromString(xslText, 'application/xml');
-          const errNode = xslDoc.querySelector('parsererror');
-          if (errNode) throw new Error('XSL parse error: ' + errNode.textContent);
+                    var parseError = xmlDoc.querySelector('parsererror');
+                    if (parseError) throw new Error('XML parsing error: ' + parseError.textContent);
 
-          processor.importStylesheet(xslDoc);
+                    var xsltProcessor = new XSLTProcessor();
+                    xsltProcessor.importStylesheet(xslDoc);
+                    var resultDoc = xsltProcessor.transformToFragment(xmlDoc, document);
 
-          return fetch(xmlURL).then(res => {
-            if (!res.ok) throw new Error('Failed to fetch XML: ' + res.status);
-            return res.text();
-          });
-        })
-        .then(xmlText => {
-          const xmlDoc = parser.parseFromString(xmlText, 'application/xml');
-          const errNode = xmlDoc.querySelector('parsererror');
-          if (errNode) throw new Error('XML parse error: ' + errNode.textContent);
+                    outputDiv.innerHTML = '';
+                    outputDiv.appendChild(resultDoc);
+                } catch (err) {
+                    outputDiv.innerHTML = '<div class="error"><strong>Error:</strong> ' + err.message + '</div>';
+                }
+            }
 
-          const fragment = processor.transformToFragment(xmlDoc, document);
-          out.textContent = '';
-          out.appendChild(fragment);
-        })
-        .catch(err => {
-          console.error(err);
-          out.textContent = 'Transform error: ' + err.message;
-        });
-    }
-
-    window.addEventListener('DOMContentLoaded', loadAndTransform);
-  </script>
+            loadBtn.addEventListener('click', transform);
+        })();
+    </script>
 </body>
 </html>

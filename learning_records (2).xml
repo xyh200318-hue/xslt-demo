@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE records [
+  <!ELEMENT records (record*)>
+  <!ELEMENT record (language, description, grades)>
+  <!ELEMENT language (#PCDATA)>
+  <!ELEMENT description (#PCDATA)>
+  <!ELEMENT grades (result+)>
+  <!ELEMENT result (#PCDATA)>
+  <!ATTLIST record id ID #REQUIRED>
+  <!ATTLIST record type (guided|independent) "guided">
+  <!ATTLIST result level (A | B | C) "A">
+]>
+<records>
+  <record id="r1" type="guided">
+    <language>Arabic</language>
+    <description>This record is graded as an A if the candidate has demonstrated proficiency in Arabic</description>
+    <grades>
+      <result level="A">UNATTAINED</result>
+      <result level="B">UNATTAINED</result>
+      <result level="C">ACHIEVED</result>
+    </grades>
+  </record>
+  <record id="r2" type="guided">
+    <language>English</language>
+    <description>This record is graded as an A if the candidate has demonstrated proficiency in English</description>
+    <grades>
+      <result level="A">UNATTAINED</result>
+      <result level="B">ACHIEVED</result>
+      <result level="C">ACHIEVED</result>
+    </grades>
+  </record>
+  <record id="r3" type="independent">
+    <language>French</language>
+    <description>Independent study – not for guided learning display</description>
+    <grades>
+      <result level="A">ACHIEVED</result>
+      <result level="B">ACHIEVED</result>
+      <result level="C">ACHIEVED</result>
+    </grades>
+  </record>
+  <record id="r4" type="guided">
+    <language>Japanese</language>
+    <description>This record is graded as an A if the candidate has demonstrated proficiency in Japanese</description>
+    <grades>
+      <result level="A">ACHIEVED</result>
+      <result level="B">ACHIEVED</result>
+      <result level="C">ACHIEVED</result>
+    </grades>
+  </record>
+  <record id="r5" type="guided">
+    <language>Spanish</language>
+    <description>This record is graded as an A if the candidate has demonstrated proficiency in Spanish</description>
+    <grades>
+      <result level="A">ACHIEVED</result>
+      <result level="B">ACHIEVED</result>
+      <result level="C">ACHIEVED</result>
+    </grades>
+  </record>
+  <record id="r6" type="independent">
+    <language>German</language>
+    <description>Self-paced course – not guided</description>
+    <grades>
+      <result level="A">UNATTAINED</result>
+      <result level="B">UNATTAINED</result>
+      <result level="C">ACHIEVED</result>
+    </grades>
+  </record>
+</records>
